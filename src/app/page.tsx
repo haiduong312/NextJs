@@ -1,3 +1,6 @@
-export default function HomePage() {
-    return <div>hello world</div>;
-}
+import Header from "@/components/header/app.header";
+
+const HomePage = () => {
+    return <Header />;
+};
+export default HomePage;
