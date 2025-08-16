@@ -1,3 +1,4 @@
+import Footer from "@/components/footer/app.footer";
 import Header from "@/components/header/app.header";
 import ThemeRegistry from "@/components/theme-registry/theme.registry";
 
@@ -11,6 +12,7 @@ export default function RootLayout({
             <body>
                 <Header />
                 <ThemeRegistry>{children}</ThemeRegistry>
+                <Footer />
             </body>
         </html>
     );
