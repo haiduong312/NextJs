@@ -5,16 +5,23 @@ import Slider, { Settings } from "react-slick";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { Box, Button, Divider } from "@mui/material";
-const MainSlider = () => {
+import Link from "next/link";
+
+interface IProps {
+    data: ITrackTop[];
+    title: string;
+}
+const MainSlider = ({ data, title }: IProps) => {
     const NextArrow = (props: any) => {
         return (
             <Button
-                variant="outlined"
+                variant="contained"
+                color="inherit"
                 onClick={props.onClick}
                 sx={{
                     position: "absolute",
                     right: 0,
-                    top: "50%",
+                    top: "25%",
                     zIndex: 2,
                     minWidth: 30,
                     width: 35,
@@ -27,12 +34,13 @@ const MainSlider = () => {
     const PreArrow = (props: any) => {
         return (
             <Button
-                variant="outlined"
+                variant="contained"
+                color="inherit"
                 onClick={props.onClick}
                 sx={{
                     position: "absolute",
                     left: 0,
-                    top: "50%",
+                    top: "25%",
                     zIndex: 2,
                     minWidth: 30,
                     width: 35,
@@ -55,7 +63,7 @@ const MainSlider = () => {
         <Box
             sx={{
                 margin: "0 50px",
-                ".abc": {
+                ".track": {
                     padding: "0 10px",
                 },
                 h3: {
@@ -65,49 +73,31 @@ const MainSlider = () => {
                 },
             }}
         >
-            <h2>Multiple tracks</h2>
+            <h2>{title}</h2>
             <Slider {...settings}>
-                <div className="abc">
-                    <h3>1</h3>
-                </div>
-                <div className="abc">
-                    <h3>2</h3>
-                </div>
-                <div className="abc">
-                    <h3>3</h3>
-                </div>
-                <div className="abc">
-                    <h3>4</h3>
-                </div>
-                <div className="abc">
-                    <h3>5</h3>
-                </div>
-                <div className="abc">
-                    <h3>6</h3>
-                </div>
+                {data.map((item, index) => {
+                    return (
+                        <div className="track" key={index}>
+                            <img
+                                src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/images/${item.imgUrl}`}
+                                alt=""
+                                style={{ width: 180, height: 160 }}
+                            />
+                            <Link
+                                href={`/track/${item._id}?audio=${item.trackUrl}`}
+                                style={{
+                                    textDecoration: "none",
+                                    color: "unset",
+                                }}
+                            >
+                                <h4>{item.title}</h4>
+                            </Link>
+                            <h5>{item.description}</h5>
+                        </div>
+                    );
+                })}
             </Slider>
             <Divider />
-            <h2>Multiple tracks</h2>
-            <Slider {...settings}>
-                <div className="abc">
-                    <h3>1</h3>
-                </div>
-                <div className="abc">
-                    <h3>2</h3>
-                </div>
-                <div className="abc">
-                    <h3>3</h3>
-                </div>
-                <div className="abc">
-                    <h3>4</h3>
-                </div>
-                <div className="abc">
-                    <h3>5</h3>
-                </div>
-                <div className="abc">
-                    <h3>6</h3>
-                </div>
-            </Slider>
         </Box>
     );
 };
