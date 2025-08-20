@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-
+import WaveSurfer, { WaveSurferOptions } from "wavesurfer.js";
 export const useHasMounted = () => {
     const [hasMounted, setHasMounted] = useState<boolean>(false);
     useEffect(() => {
@@ -9,17 +9,19 @@ export const useHasMounted = () => {
     return hasMounted;
 };
 
-export const useScript = (url: string) => {
+// wavesurfer hook
+export const useWaveSurfer = (
+    ref: React.RefObject<HTMLDivElement>,
+    options: Omit<WaveSurferOptions, "container">
+) => {
+    const [waveSurfer, setWaveSurfer] = useState<any>(null);
     useEffect(() => {
-        const script = document.createElement("script");
-
-        script.src = url;
-        script.async = true;
-
-        document.body.appendChild(script);
-
+        if (!ref.current) return;
+        const ws = WaveSurfer.create({ ...options, container: ref.current });
+        setWaveSurfer(ws);
         return () => {
-            document.body.removeChild(script);
+            ws.destroy();
         };
-    }, [url]);
+    }, [options, ref]);
+    return waveSurfer;
 };
