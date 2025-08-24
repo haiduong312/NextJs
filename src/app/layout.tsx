@@ -1,6 +1,7 @@
 import Footer from "@/components/footer/app.footer";
 import Header from "@/components/header/app.header";
 import ThemeRegistry from "@/components/theme-registry/theme.registry";
+import { SessionProvider } from "next-auth/react";
 
 export default function RootLayout({
     children,
@@ -10,9 +11,11 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body>
-                <Header />
-                <ThemeRegistry>{children}</ThemeRegistry>
-                <Footer />
+                <SessionProvider>
+                    <Header />
+                    <ThemeRegistry>{children}</ThemeRegistry>
+                    <Footer />
+                </SessionProvider>
             </body>
         </html>
     );

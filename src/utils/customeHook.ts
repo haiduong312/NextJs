@@ -14,10 +14,13 @@ export const useWaveSurfer = (
     ref: React.RefObject<HTMLDivElement>,
     options: Omit<WaveSurferOptions, "container">
 ) => {
-    const [waveSurfer, setWaveSurfer] = useState<any>(null);
+    const [waveSurfer, setWaveSurfer] = useState<WaveSurfer | null>(null);
     useEffect(() => {
         if (!ref.current) return;
-        const ws = WaveSurfer.create({ ...options, container: ref.current });
+        const ws = WaveSurfer.create({
+            ...options,
+            container: ref.current,
+        });
         setWaveSurfer(ws);
         return () => {
             ws.destroy();
