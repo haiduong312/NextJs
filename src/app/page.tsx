@@ -1,19 +1,11 @@
-import Header from "@/components/header/app.header";
 import MainSlider from "@/components/main/main.slider";
 import { Container } from "@mui/material";
 import { sendRequest } from "@/utils/api";
-
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 const HomePage = async () => {
-    // const res = await fetch("http://localhost:8000/api/v1/tracks/top", {
-    //     method: "POST",
-    //     headers: {
-    //         "Content-type": "application/json",
-    //     },
-    //     body: JSON.stringify({
-    //         category: "CHILL",
-    //         limit: 10,
-    //     }),
-    // });
+    const session = await getServerSession(authOptions);
+    console.log("check", session);
     const chill = await sendRequest<IBackendRes<ITrackTop[]>>({
         url: "http://localhost:8000/api/v1/tracks/top",
         method: "POST",
