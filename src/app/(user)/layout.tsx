@@ -1,7 +1,7 @@
 import Footer from "@/components/footer/app.footer";
 import Header from "@/components/header/app.header";
 import ThemeRegistry from "@/components/theme-registry/theme.registry";
-import NextAuthWrapper from "./lib/next.auth.wrapper";
+import NextAuthWrapper from "../lib/next.auth.wrapper";
 
 export default function RootLayout({
     children,
@@ -11,11 +11,13 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body>
-                <NextAuthWrapper>
-                    <Header />
-                    <ThemeRegistry>{children}</ThemeRegistry>
-                    <Footer />
-                </NextAuthWrapper>
+                <ThemeRegistry>
+                    <NextAuthWrapper>
+                        <Header />
+                        {children}
+                        <Footer />
+                    </NextAuthWrapper>
+                </ThemeRegistry>
             </body>
         </html>
     );
