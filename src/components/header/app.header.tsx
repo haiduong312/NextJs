@@ -234,9 +234,7 @@ export default function Header() {
                                     </Avatar>
                                 </>
                             ) : (
-                                <Link href={"#"} onClick={() => signIn()}>
-                                    Login
-                                </Link>
+                                <Link href={"/auth/signin"}>Login</Link>
                             )}
                         </Box>
                         <Box sx={{ display: { xs: "flex", md: "none" } }}>
