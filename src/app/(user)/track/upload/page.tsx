@@ -1,10 +1,15 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import UploadStep1 from "@/components/upload/upload.step1";
 import UploadStep2 from "@/components/upload/upload.step2";
+import useLocalStorage from "@/utils/customeHook";
 
 const UploadPage = () => {
-    const [openStep1, setOpenStep1] = useState<boolean>(true);
+    const [openStep1, setOpenStep1] = useLocalStorage<boolean>(
+        "upload-step",
+        true
+    );
+
     return (
         <div>
             {openStep1 ? (

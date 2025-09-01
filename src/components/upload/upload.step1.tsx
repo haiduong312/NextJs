@@ -7,6 +7,7 @@ import { useCallback } from "react";
 import { Container } from "@mui/material";
 import { sendRequest, sendRequestFile } from "@/utils/api";
 import { useSession } from "next-auth/react";
+import axios from "axios";
 const VisuallyHiddenInput = styled("input")({
     clip: "rect(0 0 0 0)",
     clipPath: "inset(50%)",
@@ -24,23 +25,39 @@ interface IProps {
 }
 const UploadStep1 = ({ openStep1, setOpenStep1 }: IProps) => {
     const { data } = useSession();
-
+    console.log(data);
     const onDrop = useCallback(
         async (acceptedFiles: FileWithPath[]) => {
             if (acceptedFiles && acceptedFiles[0]) {
                 const audio = acceptedFiles[0];
                 const formData = new FormData();
                 formData.append("fileUpload", audio);
-                const res = await sendRequestFile<IBackendRes<ITrackTop[]>>({
-                    url: "http://localhost:8000/api/v1/files/upload",
-                    method: "POST",
-                    body: formData,
-                    headers: {
-                        Authorization: `Bearer ${data?.access_token}`,
-                        target_type: "tracks",
-                    },
-                });
-                console.log(data?.access_token);
+                // const res = await sendRequestFile<IBackendRes<ITrackTop[]>>({
+                //     url: "http://localhost:8000/api/v1/files/upload",
+                //     method: "POST",
+                //     body: formData,
+                //     headers: {
+                //         Authorization: `Bearer ${data?.access_token}`,
+                //         target_type: "tracks",
+                //     },
+                // });
+                try {
+                    const res = await axios.post(
+                        "http://localhost:8000/api/v1/files/upload",
+                        formData,
+                        {
+                            headers: {
+                                Authorization: `Bearer ${data?.access_token}`,
+                                target_type: "tracks",
+                            },
+                        }
+                    );
+                    if (res.data && res) {
+                        setOpenStep1(false);
+                    }
+                } catch (error) {
+                    console.log("error", error);
+                }
             }
         },
         [data]

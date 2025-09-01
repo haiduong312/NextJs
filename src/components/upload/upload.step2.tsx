@@ -29,6 +29,7 @@ function LinearProgressWithLabel(
     );
 }
 const UploadStep2 = ({ openStep1, setOpenStep1 }: IProps) => {
+    const [genre, setGenre] = useState<string>("");
     const [avatarSrc, setAvatarSrc] = useState<string | undefined>(undefined);
     const [progress, setProgress] = useState(10);
     useEffect(() => {
@@ -166,6 +167,8 @@ const UploadStep2 = ({ openStep1, setOpenStep1 }: IProps) => {
                         label="Genre"
                         helperText="Please select your genre"
                         variant="standard"
+                        value={genre}
+                        onChange={(e) => setGenre(e.target.value)}
                     >
                         {select.map((option) => (
                             <MenuItem key={option.value} value={option.value}>
