@@ -294,7 +294,7 @@ const WaveTrack = () => {
                         overflow: "hidden",
                     }}
                 >
-                    Cover
+                    <img src="/assets/photo/upload-icon.svg" alt="" />
                 </div>
             </div>
         </div>
