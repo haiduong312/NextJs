@@ -2,16 +2,16 @@
 import AudioPlayer from "react-h5-audio-player";
 import "react-h5-audio-player/lib/styles.css";
 import * as React from "react";
-import { styled } from "@mui/material/styles";
 import AppBar from "@mui/material/AppBar";
-import Fab from "@mui/material/Fab";
 import { Container } from "@mui/material";
 import { useHasMounted } from "@/utils/customeHook";
+import "@/app/styles/footer.css";
+import { useBearStore } from "@/app/lib/store";
 const Footer = () => {
     const hasMounted = useHasMounted();
     if (!hasMounted) return <></>;
     return (
-        <div>
+        <div style={{ marginTop: 50 }}>
             <AppBar
                 position="fixed"
                 color="primary"
@@ -21,8 +21,14 @@ const Footer = () => {
                     background: "#f2f2f2",
                 }}
             >
-                <Container sx={{ display: "flex", gap: 10 }}>
+                <Container
+                    sx={{
+                        display: "flex",
+                        gap: 10,
+                    }}
+                >
                     <AudioPlayer
+                        layout="horizontal-reverse"
                         src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/tracks/hoidanit.mp3`}
                         volume={0.5}
                         style={{ boxShadow: "none", background: "#f2f2f2" }}

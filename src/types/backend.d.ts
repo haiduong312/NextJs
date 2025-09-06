@@ -49,4 +49,11 @@ declare global {
         createdAt: Date;
         updatedAt: Date;
     }
+    interface IShareTrack extends ITrackTop {
+        isPlaying: boolean;
+    }
+    interface ITrackContext {
+        currentTrack: string;
+        setCurrentTrack: (v: string) => void;
+    }
 }
