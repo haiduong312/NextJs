@@ -26,16 +26,23 @@ const initialValue = {
 };
 export const useTrackStore = create<TrackState>((set) => ({
     currentTrack: initialValue,
-    isPlaying: false,
-    setCurrentTrack: () => {
+    setCurrentTrack: (track) => {
         set((state) => {
-            console.log(state);
-            return {
-                currentTrack: {
-                    ...state.currentTrack,
-                    isPlaying: !state.currentTrack.isPlaying,
-                },
-            };
+            if (state.currentTrack._id === track._id) {
+                return {
+                    currentTrack: {
+                        ...state.currentTrack,
+                        isPlaying: !state.currentTrack.isPlaying,
+                    },
+                };
+            } else {
+                return {
+                    currentTrack: {
+                        ...track,
+                        isPlaying: true,
+                    },
+                };
+            }
         });
     },
 }));

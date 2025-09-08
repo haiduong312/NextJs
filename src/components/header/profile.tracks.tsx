@@ -9,15 +9,20 @@ import Typography from "@mui/material/Typography";
 import SkipPreviousIcon from "@mui/icons-material/SkipPrevious";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import SkipNextIcon from "@mui/icons-material/SkipNext";
-import { useTrackStore } from "@/app/lib/store";
 import PauseIcon from "@mui/icons-material/Pause";
+import { useTrackContext } from "@/app/lib/context";
+import Link from "next/link";
+
 interface IProps {
     data: ITrackTop;
 }
 
 const TrackProfile = ({ data }: IProps) => {
-    const setTrack = useTrackStore((state) => state.setCurrentTrack);
-    const currentTrack = useTrackStore((state) => state.currentTrack);
+    // const setTrack = useTrackStore((state) => state.setCurrentTrack);
+    // const currentTrack = useTrackStore((state) => state.currentTrack);
+    const { currentTrack, setCurrentTrack } =
+        useTrackContext() as ITrackContext;
+    const isPlaying = data._id === currentTrack._id && currentTrack.isPlaying;
     const theme = useTheme();
     return (
         <Card
@@ -36,14 +41,22 @@ const TrackProfile = ({ data }: IProps) => {
         >
             <Box sx={{ display: "flex", flexDirection: "column", flex: 1 }}>
                 <CardContent sx={{ flex: "1 0 auto", p: 3 }}>
-                    <Typography
-                        component="div"
-                        variant="h5"
-                        fontWeight="bold"
-                        gutterBottom
+                    <Link
+                        href={`/track/${data._id}?audio=${data.trackUrl}&id=${data._id}`}
+                        style={{
+                            textDecoration: "none",
+                            color: "unset",
+                        }}
                     >
-                        {data.title}
-                    </Typography>
+                        <Typography
+                            component="div"
+                            variant="h5"
+                            fontWeight="bold"
+                            gutterBottom
+                        >
+                            {data.title}
+                        </Typography>
+                    </Link>
                     <Typography
                         variant="body2"
                         component="div"
@@ -72,9 +85,11 @@ const TrackProfile = ({ data }: IProps) => {
                         aria-label="play/pause"
                         size="large"
                         color="primary"
-                        onClick={() => setTrack({ ...data, isPlaying: false })}
+                        onClick={() =>
+                            setCurrentTrack({ ...data, isPlaying: !isPlaying })
+                        }
                     >
-                        {currentTrack.isPlaying ? (
+                        {isPlaying ? (
                             <PauseIcon sx={{ height: 40, width: 40 }} />
                         ) : (
                             <PlayArrowIcon sx={{ height: 40, width: 40 }} />

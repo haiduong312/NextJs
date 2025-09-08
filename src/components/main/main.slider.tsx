@@ -84,7 +84,7 @@ const MainSlider = ({ data, title }: IProps) => {
                                 style={{ width: 180, height: 160 }}
                             />
                             <Link
-                                href={`/track/${item._id}?audio=${item.trackUrl}`}
+                                href={`/track/${item._id}?audio=${item.trackUrl}&id=${item._id}`}
                                 style={{
                                     textDecoration: "none",
                                     color: "unset",

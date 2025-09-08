@@ -53,7 +53,7 @@ declare global {
         isPlaying: boolean;
     }
     interface ITrackContext {
-        currentTrack: string;
-        setCurrentTrack: (v: string) => void;
+        currentTrack: IShareTrack;
+        setCurrentTrack: (v: IShareTrack) => void;
     }
 }

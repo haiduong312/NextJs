@@ -7,10 +7,17 @@ import PauseIcon from "@mui/icons-material/Pause";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import "./WaveTrack.scss";
 import { Tooltip } from "@mui/material";
-const WaveTrack = () => {
+import { useTrackContext } from "@/app/lib/context";
+
+interface IProps {
+    track: ITrackTop | null;
+}
+const WaveTrack = ({ track }: IProps) => {
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
     const searchParams = useSearchParams();
     const fileName = searchParams.get("audio");
+    const { currentTrack, setCurrentTrack } =
+        useTrackContext() as ITrackContext;
     const containerRef = useRef<HTMLDivElement>(null);
     const [time, setTime] = useState<string>("0:00");
     const [duration, setDuration] = useState<string>("0:00");
@@ -116,7 +123,7 @@ const WaveTrack = () => {
 
     const onPlayPause = useCallback(() => {
         if (wavesurfer) {
-            wavesurfer && wavesurfer.playPause();
+            wavesurfer.playPause();
             setIsPlaying(wavesurfer?.isPlaying());
         }
     }, [wavesurfer]);
@@ -148,6 +155,11 @@ const WaveTrack = () => {
         const percent = (moment / hardCodeDuration) * 100;
         return `${percent}%`;
     };
+    useEffect(() => {
+        if (wavesurfer && currentTrack._id === track?._id) {
+            currentTrack.isPlaying ? wavesurfer.play() : wavesurfer.pause();
+        }
+    }, [currentTrack]);
     return (
         <div
             style={{
@@ -180,7 +192,15 @@ const WaveTrack = () => {
                     }}
                 >
                     <button
-                        onClick={() => onPlayPause()}
+                        onClick={() => {
+                            onPlayPause();
+                            if (track && wavesurfer) {
+                                setCurrentTrack({
+                                    ...track,
+                                    isPlaying: wavesurfer?.isPlaying(),
+                                });
+                            }
+                        }}
                         style={{
                             background:
                                 "linear-gradient(135deg, #2ecc71, #27ae60)",
@@ -226,7 +246,7 @@ const WaveTrack = () => {
                                 padding: "4px 8px", // cho đẹp hơn
                             }}
                         >
-                            ádnjkádjksandjksạndsjakdnjskađasạđajadjsạ
+                            {track?.title}
                         </h2>
                         <p
                             style={{
@@ -238,7 +258,7 @@ const WaveTrack = () => {
                                 padding: "2px 8px",
                             }}
                         >
-                            author
+                            {track?.description}
                         </p>
                     </div>
                 </div>
@@ -251,7 +271,7 @@ const WaveTrack = () => {
                     <div className="comments" style={{ position: "relative" }}>
                         {arrComments.map((item, index) => {
                             return (
-                                <Tooltip arrow title={item.user}>
+                                <Tooltip arrow title={item.user} key={item.id}>
                                     <img
                                         onPointerMove={(e) => {
                                             const hover = hoverRef.current!;
@@ -294,7 +314,14 @@ const WaveTrack = () => {
                         overflow: "hidden",
                     }}
                 >
-                    <img src="/assets/photo/upload-icon.svg" alt="" />
+                    {track ? (
+                        <img
+                            src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/images/${track.imgUrl}`}
+                            alt=""
+                        />
+                    ) : (
+                        ""
+                    )}
                 </div>
             </div>
         </div>

@@ -1,15 +1,27 @@
 "use client";
 import AudioPlayer from "react-h5-audio-player";
 import "react-h5-audio-player/lib/styles.css";
-import * as React from "react";
 import AppBar from "@mui/material/AppBar";
 import { Container } from "@mui/material";
 import { useHasMounted } from "@/utils/customeHook";
 import "@/app/styles/footer.css";
-import { useBearStore } from "@/app/lib/store";
+import { useRef } from "react";
+import { useTrackContext } from "@/app/lib/context";
 const Footer = () => {
+    const { currentTrack, setCurrentTrack } =
+        useTrackContext() as ITrackContext;
+    const playRef = useRef(null);
     const hasMounted = useHasMounted();
     if (!hasMounted) return <></>;
+
+    if (currentTrack?.isPlaying) {
+        //@ts-ignore
+        playRef?.current?.audio?.current?.play();
+    } else {
+        //@ts-ignore
+        playRef?.current?.audio?.current?.pause();
+    }
+
     return (
         <div style={{ marginTop: 50 }}>
             <AppBar
@@ -27,12 +39,30 @@ const Footer = () => {
                         gap: 10,
                     }}
                 >
-                    <AudioPlayer
-                        layout="horizontal-reverse"
-                        src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/tracks/hoidanit.mp3`}
-                        volume={0.5}
-                        style={{ boxShadow: "none", background: "#f2f2f2" }}
-                    />
+                    {currentTrack.trackUrl ? (
+                        <AudioPlayer
+                            ref={playRef}
+                            layout="horizontal-reverse"
+                            src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/tracks/${currentTrack.trackUrl}`}
+                            volume={0.5}
+                            style={{ boxShadow: "none", background: "#f2f2f2" }}
+                            autoPlay={true}
+                            onPlay={() => {
+                                setCurrentTrack({
+                                    ...currentTrack,
+                                    isPlaying: true,
+                                });
+                            }}
+                            onPause={() => {
+                                setCurrentTrack({
+                                    ...currentTrack,
+                                    isPlaying: false,
+                                });
+                            }}
+                        />
+                    ) : (
+                        <></>
+                    )}
 
                     <div
                         style={{
@@ -43,8 +73,12 @@ const Footer = () => {
                             minWidth: 100,
                         }}
                     >
-                        <div style={{ color: "rgb(140 138 138)" }}>Eric</div>
-                        <div style={{ color: "black" }}>Who am I?</div>
+                        <div style={{ color: "rgb(140 138 138)" }}>
+                            {currentTrack.description}
+                        </div>
+                        <div style={{ color: "black" }}>
+                            {currentTrack.title}
+                        </div>
                     </div>
                 </Container>
             </AppBar>
