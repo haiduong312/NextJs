@@ -8,11 +8,14 @@ import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import "./WaveTrack.scss";
 import { Tooltip } from "@mui/material";
 import { useTrackContext } from "@/app/lib/context";
+import { fetchDefaultImage } from "@/utils/api";
+import CommentTrack from "./comment.track";
 
 interface IProps {
     track: ITrackTop | null;
+    comment: ITrackComment[];
 }
-const WaveTrack = ({ track }: IProps) => {
+const WaveTrack = ({ track, comment }: IProps) => {
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
     const searchParams = useSearchParams();
     const fileName = searchParams.get("audio");
@@ -127,29 +130,7 @@ const WaveTrack = ({ track }: IProps) => {
             setIsPlaying(wavesurfer?.isPlaying());
         }
     }, [wavesurfer]);
-    const arrComments = [
-        {
-            id: 1,
-            avatar: "http://localhost:8000/images/chill1.png",
-            moment: 10,
-            user: "username 1",
-            content: "just a comment1",
-        },
-        {
-            id: 2,
-            avatar: "http://localhost:8000/images/chill1.png",
-            moment: 30,
-            user: "username 2",
-            content: "just a comment3",
-        },
-        {
-            id: 3,
-            avatar: "http://localhost:8000/images/chill1.png",
-            moment: 50,
-            user: "username 3",
-            content: "just a comment3",
-        },
-    ];
+    const arrComments = comment;
     const calLeft = (moment: number) => {
         const hardCodeDuration = 199;
         const percent = (moment / hardCodeDuration) * 100;
@@ -161,168 +142,182 @@ const WaveTrack = ({ track }: IProps) => {
         }
     }, [currentTrack]);
     return (
-        <div
-            style={{
-                background: "linear-gradient(to right, #f1f2b5, #135058)",
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                padding: "30px",
-                color: "#fff",
-                marginTop: 20,
-                borderRadius: "16px",
-                boxShadow: "0 4px 12px rgba(0,0,0,0.4)",
-            }}
-        >
+        <div>
             <div
-                className="left"
                 style={{
-                    width: "70%",
+                    background: "linear-gradient(to right, #f1f2b5, #135058)",
                     display: "flex",
-                    flexDirection: "column",
-                    gap: 120,
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    padding: "30px",
+                    color: "#fff",
+                    marginTop: 20,
+                    borderRadius: "16px",
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.4)",
                 }}
             >
-                {/* Control */}
                 <div
-                    className="control"
+                    className="left"
                     style={{
+                        width: "70%",
                         display: "flex",
-                        gap: "12px",
+                        flexDirection: "column",
+                        gap: 120,
                     }}
                 >
-                    <button
-                        onClick={() => {
-                            onPlayPause();
-                            if (track && wavesurfer) {
-                                setCurrentTrack({
-                                    ...track,
-                                    isPlaying: wavesurfer?.isPlaying(),
-                                });
-                            }
-                        }}
+                    {/* Control */}
+                    <div
+                        className="control"
                         style={{
-                            background:
-                                "linear-gradient(135deg, #2ecc71, #27ae60)",
-                            border: "none",
-                            borderRadius: "50%",
-                            width: "60px",
-                            height: "60px",
-                            color: "#fff",
-                            fontSize: "18px",
-                            fontWeight: "bold",
-                            cursor: "pointer",
-                            boxShadow: "0 3px 8px rgba(0,0,0,0.4)",
-                            transition: "all 0.2s ease",
-                            display: "flex", // 👈 thêm
-                            alignItems: "center", // 👈 căn giữa dọc
-                            justifyContent: "center", // 👈 căn giữa ngang
-                            padding: 0,
+                            display: "flex",
+                            gap: "12px",
                         }}
                     >
-                        {isPlaying ? (
-                            <PauseIcon
-                                style={{ width: "40px", height: "40px" }}
-                            />
-                        ) : (
-                            <PlayArrowIcon
-                                style={{ width: "40px", height: "40px" }}
-                            />
-                        )}
-                    </button>
-                    <div className="info">
-                        <h2
+                        <button
+                            onClick={() => {
+                                onPlayPause();
+                                if (track && wavesurfer) {
+                                    setCurrentTrack({
+                                        ...track,
+                                        isPlaying: wavesurfer?.isPlaying(),
+                                    });
+                                }
+                            }}
                             style={{
-                                fontSize: "30px",
-                                margin: "0",
-                                fontWeight: "700",
+                                background:
+                                    "linear-gradient(135deg, #2ecc71, #27ae60)",
+                                border: "none",
+                                borderRadius: "50%",
+                                width: "60px",
+                                height: "60px",
                                 color: "#fff",
-                                maxWidth: "500px",
-                                wordWrap: "break-word",
-                                overflowWrap: "break-word",
-                                whiteSpace: "normal",
-                                background: "black",
-                                display: "block", // nền chỉ ôm chữ
-                                padding: "4px 8px", // cho đẹp hơn
+                                fontSize: "18px",
+                                fontWeight: "bold",
+                                cursor: "pointer",
+                                boxShadow: "0 3px 8px rgba(0,0,0,0.4)",
+                                transition: "all 0.2s ease",
+                                display: "flex", // 👈 thêm
+                                alignItems: "center", // 👈 căn giữa dọc
+                                justifyContent: "center", // 👈 căn giữa ngang
+                                padding: 0,
                             }}
                         >
-                            {track?.title}
-                        </h2>
-                        <p
-                            style={{
-                                fontSize: "20px",
-                                margin: "0", // bỏ khoảng cách
-                                color: "rgb(152, 112, 122)",
-                                background: "black",
-                                display: "inline-block", // nền chỉ ôm chữ author
-                                padding: "2px 8px",
-                            }}
+                            {isPlaying ? (
+                                <PauseIcon
+                                    style={{ width: "40px", height: "40px" }}
+                                />
+                            ) : (
+                                <PlayArrowIcon
+                                    style={{ width: "40px", height: "40px" }}
+                                />
+                            )}
+                        </button>
+                        <div className="info">
+                            <h2
+                                style={{
+                                    fontSize: "30px",
+                                    margin: "0",
+                                    fontWeight: "700",
+                                    color: "#fff",
+                                    maxWidth: "500px",
+                                    wordWrap: "break-word",
+                                    overflowWrap: "break-word",
+                                    whiteSpace: "normal",
+                                    background: "black",
+                                    display: "block", // nền chỉ ôm chữ
+                                    padding: "4px 8px", // cho đẹp hơn
+                                }}
+                            >
+                                {track?.title}
+                            </h2>
+                            <p
+                                style={{
+                                    fontSize: "20px",
+                                    margin: "0", // bỏ khoảng cách
+                                    color: "rgb(152, 112, 122)",
+                                    background: "black",
+                                    display: "inline-block", // nền chỉ ôm chữ author
+                                    padding: "2px 8px",
+                                }}
+                            >
+                                {track?.description}
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Waveform */}
+                    <div ref={containerRef} className="waveform">
+                        <div className="time">{time}</div>
+                        <div className="duration">{duration}</div>
+                        <div className="hover" ref={hoverRef}></div>
+                        <div
+                            className="comments"
+                            style={{ position: "relative" }}
                         >
-                            {track?.description}
-                        </p>
+                            {arrComments.map((item, index) => {
+                                return (
+                                    <Tooltip
+                                        arrow
+                                        title={item.content}
+                                        key={item._id}
+                                    >
+                                        <img
+                                            onPointerMove={(e) => {
+                                                const hover = hoverRef.current!;
+                                                hover.style.width = calLeft(
+                                                    item.moment + 4
+                                                );
+                                            }}
+                                            key={index}
+                                            src={fetchDefaultImage(
+                                                item.user.type
+                                            )}
+                                            style={{
+                                                width: 30,
+                                                height: 30,
+                                                position: "absolute",
+                                                zIndex: 3,
+                                                top: 72,
+                                                left: calLeft(item.moment),
+                                            }}
+                                        />
+                                    </Tooltip>
+                                );
+                            })}
+                        </div>
                     </div>
                 </div>
 
-                {/* Waveform */}
-                <div ref={containerRef} className="waveform">
-                    <div className="time">{time}</div>
-                    <div className="duration">{duration}</div>
-                    <div className="hover" ref={hoverRef}></div>
-                    <div className="comments" style={{ position: "relative" }}>
-                        {arrComments.map((item, index) => {
-                            return (
-                                <Tooltip arrow title={item.user} key={item.id}>
-                                    <img
-                                        onPointerMove={(e) => {
-                                            const hover = hoverRef.current!;
-                                            hover.style.width = calLeft(
-                                                item.moment + 4
-                                            );
-                                        }}
-                                        key={index}
-                                        src={`${item.avatar}`}
-                                        style={{
-                                            width: 30,
-                                            height: 30,
-                                            position: "absolute",
-                                            zIndex: 3,
-                                            top: 73,
-                                            left: calLeft(item.moment),
-                                        }}
-                                    />
-                                </Tooltip>
-                            );
-                        })}
+                {/* Avatar */}
+                <div className="right">
+                    <div
+                        style={{
+                            background: "#333",
+                            width: "300px",
+                            height: "300px",
+                            borderRadius: "12px",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            color: "#fff",
+                            fontSize: "20px",
+                            boxShadow: "0 4px 12px rgba(0,0,0,0.4)",
+                            overflow: "hidden",
+                        }}
+                    >
+                        {track ? (
+                            <img
+                                src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/images/${track.imgUrl}`}
+                                alt=""
+                            />
+                        ) : (
+                            <></>
+                        )}
                     </div>
                 </div>
             </div>
-
-            {/* Avatar */}
-            <div className="right">
-                <div
-                    style={{
-                        background: "#333",
-                        width: "300px",
-                        height: "300px",
-                        borderRadius: "12px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        color: "#fff",
-                        fontSize: "20px",
-                        boxShadow: "0 4px 12px rgba(0,0,0,0.4)",
-                        overflow: "hidden",
-                    }}
-                >
-                    {track ? (
-                        <img
-                            src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/images/${track.imgUrl}`}
-                            alt=""
-                        />
-                    ) : (
-                        ""
-                    )}
-                </div>
+            <div style={{ marginTop: 40 }}>
+                <CommentTrack comment={comment} track={track} />
             </div>
         </div>
     );

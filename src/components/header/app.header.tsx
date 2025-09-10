@@ -20,6 +20,7 @@ import Avatar from "@mui/material/Avatar";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession, signIn, signOut } from "next-auth/react";
+import { fetchDefaultImage } from "@/utils/api";
 const Search = styled("div")(({ theme }) => ({
     position: "relative",
     borderRadius: theme.shape.borderRadius,
@@ -107,14 +108,16 @@ export default function Header() {
             open={isMenuOpen}
             onClose={handleMenuClose}
         >
-            <MenuItem>
-                <Link
-                    href={`/profile/${data?.user._id}`}
-                    style={{ color: "unset", textDecoration: "none" }}
-                >
-                    Profile
-                </Link>
-            </MenuItem>
+            {data?.user && (
+                <MenuItem>
+                    <Link
+                        href={`/profile/${data.user._id}`}
+                        style={{ color: "unset", textDecoration: "none" }}
+                    >
+                        Profile
+                    </Link>
+                </MenuItem>
+            )}
             <MenuItem
                 onClick={() => {
                     handleMenuClose();
@@ -222,14 +225,24 @@ export default function Header() {
                                 },
                             }}
                         >
-                            {data ? (
+                            {data?.user ? (
                                 <>
                                     {" "}
                                     <Link href={"/playlist"}>Playlists</Link>
                                     <Link href={"/like"}>Likes</Link>
                                     <Link href={"/track/upload"}>Upload</Link>
                                     <Avatar onClick={handleProfileMenuOpen}>
-                                        HD
+                                        <img
+                                            src={fetchDefaultImage(
+                                                data.user.type
+                                            )}
+                                            alt=""
+                                            style={{
+                                                width: "40px",
+                                                height: "40px",
+                                                objectFit: "cover",
+                                            }}
+                                        />
                                     </Avatar>
                                 </>
                             ) : (

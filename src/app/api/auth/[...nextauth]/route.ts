@@ -32,8 +32,8 @@ export const authOptions: AuthOptions = {
                         password: credentials?.password,
                     },
                 });
-
                 if (res && res.data) {
+                    console.log("check res.data", res.data);
                     // Any object returned will be saved in `user` property of the JWT
                     return res.data as any;
                 } else {
@@ -58,12 +58,12 @@ export const authOptions: AuthOptions = {
     ],
     callbacks: {
         async jwt({ token, user, account, profile, trigger }) {
-            if (trigger === "signIn" && account?.provider === "github") {
+            if (trigger === "signIn" && account?.provider !== "credentials") {
                 const res = await sendRequest<IBackendRes<JWT>>({
                     url: "http://localhost:8000/api/v1/auth/social-media",
                     method: "POST",
                     body: {
-                        type: "GITHUB",
+                        type: account?.provider.toUpperCase(),
                         username: user.email,
                     },
                 });
@@ -72,6 +72,14 @@ export const authOptions: AuthOptions = {
                     token.refresh_token = res.data.refresh_token;
                     token.user = res.data.user;
                 }
+            }
+            if (trigger === "signIn" && account?.provider === "credentials") {
+                //@ts-ignore
+                token.access_token = user?.access_token;
+                //@ts-ignore
+                token.refresh_token = user.refresh_token;
+                //@ts-ignore
+                token.user = user.user;
             }
 
             return token;
