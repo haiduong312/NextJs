@@ -1,6 +1,6 @@
 "use client";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useWaveSurfer } from "@/utils/customeHook";
 import { WaveSurferOptions } from "wavesurfer.js";
 import PauseIcon from "@mui/icons-material/Pause";
@@ -8,14 +8,17 @@ import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import "./WaveTrack.scss";
 import { Tooltip } from "@mui/material";
 import { useTrackContext } from "@/app/lib/context";
-import { fetchDefaultImage } from "@/utils/api";
+import { fetchDefaultImage, sendRequest } from "@/utils/api";
 import CommentTrack from "./comment.track";
+import LikeTrack from "./like.track";
 
 interface IProps {
     track: ITrackTop | null;
     comment: ITrackComment[];
 }
 const WaveTrack = ({ track, comment }: IProps) => {
+    const firstViewRef = useRef(true);
+    const router = useRouter();
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
     const searchParams = useSearchParams();
     const fileName = searchParams.get("audio");
@@ -132,7 +135,7 @@ const WaveTrack = ({ track, comment }: IProps) => {
     }, [wavesurfer]);
     const arrComments = comment;
     const calLeft = (moment: number) => {
-        const hardCodeDuration = 199;
+        const hardCodeDuration = wavesurfer?.getDuration() ?? 0;
         const percent = (moment / hardCodeDuration) * 100;
         return `${percent}%`;
     };
@@ -141,6 +144,22 @@ const WaveTrack = ({ track, comment }: IProps) => {
             currentTrack.isPlaying ? wavesurfer.play() : wavesurfer.pause();
         }
     }, [currentTrack]);
+
+    const handleViewIncrease = async () => {
+        if (firstViewRef.current) {
+            const res = await sendRequest<
+                IBackendRes<IModelPaginate<ITrackLike>>
+            >({
+                url: "http://localhost:8000/api/v1/tracks/increase-view",
+                method: "POST",
+                body: {
+                    trackId: track?._id,
+                },
+            });
+            router.refresh();
+            firstViewRef.current = false;
+        }
+    };
     return (
         <div>
             <div
@@ -176,6 +195,7 @@ const WaveTrack = ({ track, comment }: IProps) => {
                         <button
                             onClick={() => {
                                 onPlayPause();
+                                handleViewIncrease();
                                 if (track && wavesurfer) {
                                     setCurrentTrack({
                                         ...track,
@@ -316,8 +336,15 @@ const WaveTrack = ({ track, comment }: IProps) => {
                     </div>
                 </div>
             </div>
+            <div style={{ marginTop: 35 }}>
+                <LikeTrack track={track} />
+            </div>
             <div style={{ marginTop: 40 }}>
-                <CommentTrack comment={comment} track={track} />
+                <CommentTrack
+                    comment={comment}
+                    track={track}
+                    wavesurfer={wavesurfer}
+                />
             </div>
         </div>
     );

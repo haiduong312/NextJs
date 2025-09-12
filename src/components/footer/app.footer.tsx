@@ -70,13 +70,30 @@ const Footer = () => {
                             flexDirection: "column",
                             alignItems: "start",
                             justifyContent: "center",
+
                             minWidth: 100,
                         }}
                     >
-                        <div style={{ color: "rgb(140 138 138)" }}>
+                        <div
+                            style={{
+                                color: "rgb(140 138 138)",
+                                whiteSpace: "nowrap",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                maxWidth: "200px",
+                            }}
+                        >
                             {currentTrack.description}
                         </div>
-                        <div style={{ color: "black" }}>
+                        <div
+                            style={{
+                                color: "black",
+                                whiteSpace: "nowrap",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                maxWidth: "200px",
+                            }}
+                        >
                             {currentTrack.title}
                         </div>
                     </div>

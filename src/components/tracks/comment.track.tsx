@@ -1,22 +1,73 @@
-import { fetchDefaultImage } from "@/utils/api";
+import { fetchDefaultImage, sendRequest } from "@/utils/api";
 import { Avatar, TextField } from "@mui/material";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/vi";
 import { useSession } from "next-auth/react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import WaveSurfer from "wavesurfer.js";
+import { useHasMounted, useWaveSurfer } from "@/utils/customeHook";
 dayjs.extend(relativeTime);
 dayjs.locale("vi");
 interface IProps {
     track: ITrackTop | null;
     comment: ITrackComment[];
+    wavesurfer: WaveSurfer | null;
 }
-const CommentTrack = ({ track, comment }: IProps) => {
+const CommentTrack = ({ track, comment, wavesurfer }: IProps) => {
+    const router = useRouter();
+    const hasMounted = useHasMounted();
+    const [userComment, setUserComment] = useState<string>("");
     const { data } = useSession();
-
+    const handleSubmit = async () => {
+        const res = await sendRequest<
+            IBackendRes<IModelPaginate<ITrackComment>>
+        >({
+            url: "http://localhost:8000/api/v1/comments",
+            method: "POST",
+            body: {
+                content: userComment,
+                moment: Math.round(wavesurfer?.getCurrentTime() ?? 0),
+                track: track?._id,
+            },
+            headers: {
+                Authorization: `Bearer ${data?.access_token}`,
+            },
+        });
+        if (res.data && res) {
+            setUserComment("");
+            router.refresh();
+        }
+    };
+    const formatTime = (seconds: number) => {
+        const minutes = Math.floor(seconds / 60);
+        const secondsRemainder = Math.round(seconds) % 60;
+        const paddedSeconds = `0${secondsRemainder}`.slice(-2);
+        return `${minutes}:${paddedSeconds}`;
+    };
+    const handleJumpTime = (moment: number) => {
+        if (wavesurfer) {
+            const duration = wavesurfer.getDuration();
+            wavesurfer.seekTo(moment / duration);
+            wavesurfer.play();
+        }
+    };
     return (
         <div>
             {data?.user ? (
-                <TextField fullWidth label="Add a comment" variant="standard" />
+                <TextField
+                    fullWidth
+                    label="Add a comment"
+                    variant="standard"
+                    value={userComment}
+                    onChange={(e) => setUserComment(e.target.value)}
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                            handleSubmit();
+                        }
+                    }}
+                />
             ) : (
                 <></>
             )}
@@ -33,7 +84,9 @@ const CommentTrack = ({ track, comment }: IProps) => {
                         alt=""
                         style={{ width: "100%" }}
                     />
-                    <div>{track?.uploader.email}</div>
+                    <div style={{ textAlign: "center" }}>
+                        {track?.uploader.name}
+                    </div>
                 </div>
                 <div className="right" style={{ flex: 1 }}>
                     {comment.map((item, index) => {
@@ -44,6 +97,7 @@ const CommentTrack = ({ track, comment }: IProps) => {
                                     display: "flex",
                                     gap: "10px",
                                     justifyContent: "space-between",
+                                    marginBottom: 20,
                                 }}
                             >
                                 <div
@@ -61,14 +115,27 @@ const CommentTrack = ({ track, comment }: IProps) => {
                                             )}
                                         />
                                     </div>
-                                    <div style={{ marginBottom: 20 }}>
+                                    <div>
                                         <p
                                             style={{
                                                 margin: 0,
                                                 fontWeight: 600,
                                             }}
                                         >
-                                            {item.user.name}
+                                            {item?.user?.name ??
+                                                item?.user?.username}{" "}
+                                            <span
+                                                style={{
+                                                    color: "#555",
+                                                    fontSize: 14,
+                                                    cursor: "pointer",
+                                                }}
+                                                onClick={() => {
+                                                    handleJumpTime(item.moment);
+                                                }}
+                                            >
+                                                at {formatTime(item.moment)}
+                                            </span>
                                         </p>
                                         <p style={{ margin: 0, color: "#555" }}>
                                             {item.content}
@@ -76,7 +143,8 @@ const CommentTrack = ({ track, comment }: IProps) => {
                                     </div>
                                 </div>
                                 <div style={{ color: "#555" }}>
-                                    {dayjs(item.createdAt).fromNow()}
+                                    {hasMounted &&
+                                        dayjs(item.createdAt).fromNow()}
                                 </div>
                             </div>
                         );

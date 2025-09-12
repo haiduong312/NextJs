@@ -64,12 +64,26 @@ declare global {
         user: {
             _id: string;
             email: string;
-            name: string;
+            name?: string;
+            username?: string;
             role: string;
             type: string;
         };
         track: string;
         isDeleted: boolean;
+        createdAt: Date;
+        updatedAt: Date;
+    }
+
+    interface ITrackLike {
+        _id: string;
+        title: string;
+        description: string;
+        category: string;
+        imgUrl: string;
+        trackUrl: string;
+        countLike: string;
+        countPlay: string;
         createdAt: Date;
         updatedAt: Date;
     }
