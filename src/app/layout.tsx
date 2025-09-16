@@ -3,6 +3,7 @@ import NextAuthWrapper from "./lib/next.auth.wrapper";
 import { ToastProvider } from "@/utils/toast";
 import { TrackContextProvider } from "./lib/context";
 import { Metadata } from "next";
+import NProgressWrapper from "./lib/nprogress.wrapper";
 
 export const metadata: Metadata = {
     title: "Duong Layout",
@@ -18,13 +19,15 @@ export default function RootLayout({
         <html lang="en">
             <body>
                 <ThemeRegistry>
-                    <ToastProvider>
+                    <NProgressWrapper>
                         <NextAuthWrapper>
-                            <TrackContextProvider>
-                                {children}
-                            </TrackContextProvider>
+                            <ToastProvider>
+                                <TrackContextProvider>
+                                    {children}
+                                </TrackContextProvider>
+                            </ToastProvider>
                         </NextAuthWrapper>
-                    </ToastProvider>
+                    </NProgressWrapper>
                 </ThemeRegistry>
             </body>
         </html>

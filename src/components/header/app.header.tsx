@@ -232,19 +232,16 @@ export default function Header() {
                                     <Link href={"/playlist"}>Playlists</Link>
                                     <Link href={"/like"}>Likes</Link>
                                     <Link href={"/track/upload"}>Upload</Link>
-                                    <Avatar onClick={handleProfileMenuOpen}>
-                                        <Image
-                                            src={fetchDefaultImage(
-                                                data.user.type
-                                            )}
-                                            alt="Avatar"
-                                            width={35}
-                                            height={35}
-                                            style={{
-                                                objectFit: "cover",
-                                            }}
-                                        />
-                                    </Avatar>
+                                    <Image
+                                        onClick={handleProfileMenuOpen}
+                                        src={fetchDefaultImage(data.user.type)}
+                                        alt="Avatar"
+                                        width={35}
+                                        height={35}
+                                        style={{
+                                            objectFit: "cover",
+                                        }}
+                                    />
                                 </>
                             ) : (
                                 <Link href={"/auth/signin"}>Login</Link>

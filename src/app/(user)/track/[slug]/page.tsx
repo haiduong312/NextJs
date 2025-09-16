@@ -2,7 +2,8 @@ import WaveTrack from "@/components/tracks/wave.track";
 import { sendRequest } from "@/utils/api";
 import Container from "@mui/material/Container";
 import type { Metadata, ResolvingMetadata } from "next";
-import slugify from "slugify";
+import { notFound } from "next/navigation";
+
 type Props = {
     params: { slug: string };
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -56,6 +57,10 @@ const DetailTrackPage = async ({ params }: { params: { slug: string } }) => {
             sort: "-createdAt",
         },
     });
+
+    if (!res.data) {
+        notFound();
+    }
     return (
         <Container>
             <div>
