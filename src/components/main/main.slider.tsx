@@ -6,7 +6,8 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { Box, Button, Divider } from "@mui/material";
 import Link from "next/link";
-
+import { convertSlugUrl } from "@/utils/api";
+import Image from "next/image";
 interface IProps {
     data: ITrackTop[];
     title: string;
@@ -58,7 +59,34 @@ const MainSlider = ({ data, title }: IProps) => {
         slidesToScroll: 1,
         nextArrow: <NextArrow />,
         prevArrow: <PreArrow />,
+        responsive: [
+            {
+                breakpoint: 1024,
+                settings: {
+                    slidesToShow: 3,
+                    slidesToScroll: 3,
+                    infinite: true,
+                    dots: true,
+                },
+            },
+            {
+                breakpoint: 600,
+                settings: {
+                    slidesToShow: 2,
+                    slidesToScroll: 2,
+                    initialSlide: 2,
+                },
+            },
+            {
+                breakpoint: 480,
+                settings: {
+                    slidesToShow: 1,
+                    slidesToScroll: 1,
+                },
+            },
+        ],
     };
+
     return (
         <Box
             sx={{
@@ -77,14 +105,27 @@ const MainSlider = ({ data, title }: IProps) => {
             <Slider {...settings}>
                 {data.map((item, index) => {
                     return (
-                        <div className="track" key={index}>
-                            <img
+                        <div
+                            style={{
+                                position: "relative",
+                                height: "360px",
+                                width: "100%",
+                            }}
+                            key={index}
+                        >
+                            <Image
                                 src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/images/${item.imgUrl}`}
-                                alt=""
-                                style={{ width: 180, height: 160 }}
+                                alt="image"
+                                width={200}
+                                height={180}
+                                style={{
+                                    objectFit: "cover",
+                                }}
                             />
                             <Link
-                                href={`/track/${item._id}?audio=${item.trackUrl}&id=${item._id}`}
+                                href={`/track/${convertSlugUrl(item.title)}-${
+                                    item._id
+                                }.html?audio=${item.trackUrl}`}
                                 style={{
                                     textDecoration: "none",
                                     color: "unset",

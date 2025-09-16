@@ -7,6 +7,7 @@ import { useCallback, useState } from "react";
 import { Container } from "@mui/material";
 import { useSession } from "next-auth/react";
 import axios from "axios";
+import Image from "next/image";
 const VisuallyHiddenInput = styled("input")({
     clip: "rect(0 0 0 0)",
     clipPath: "inset(50%)",
@@ -34,7 +35,6 @@ const UploadStep1 = ({
     const onDrop = useCallback(
         async (acceptedFiles: FileWithPath[]) => {
             if (acceptedFiles && acceptedFiles[0]) {
-                console.log(acceptedFiles);
                 const audio = acceptedFiles[0];
                 const formData = new FormData();
                 formData.append("fileUpload", audio);
@@ -105,7 +105,7 @@ const UploadStep1 = ({
                 </div>
                 <div {...getRootProps({ className: "dropzone" })}>
                     <input {...getInputProps()} />
-                    <img
+                    <Image
                         src="/assets/photo/upload-icon.svg"
                         alt="icon"
                         width={80}

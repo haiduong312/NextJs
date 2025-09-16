@@ -8,6 +8,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import WaveSurfer from "wavesurfer.js";
 import { useHasMounted, useWaveSurfer } from "@/utils/customeHook";
+import Image from "next/image";
 dayjs.extend(relativeTime);
 dayjs.locale("vi");
 interface IProps {
@@ -79,10 +80,11 @@ const CommentTrack = ({ track, comment, wavesurfer }: IProps) => {
                 }}
             >
                 <div className="left" style={{ flexBasis: "10%" }}>
-                    <img
+                    <Image
                         src={fetchDefaultImage(track?.uploader.type!)}
-                        alt=""
-                        style={{ width: "100%" }}
+                        alt="Avatar"
+                        width={150}
+                        height={150}
                     />
                     <div style={{ textAlign: "center" }}>
                         {track?.uploader.name}

@@ -11,7 +11,7 @@ import { useTrackContext } from "@/app/lib/context";
 import { fetchDefaultImage, sendRequest } from "@/utils/api";
 import CommentTrack from "./comment.track";
 import LikeTrack from "./like.track";
-
+import Image from "next/image";
 interface IProps {
     track: ITrackTop | null;
     comment: ITrackComment[];
@@ -281,7 +281,8 @@ const WaveTrack = ({ track, comment }: IProps) => {
                                         title={item.content}
                                         key={item._id}
                                     >
-                                        <img
+                                        <Image
+                                            alt="avatar"
                                             onPointerMove={(e) => {
                                                 const hover = hoverRef.current!;
                                                 hover.style.width = calLeft(
@@ -292,9 +293,9 @@ const WaveTrack = ({ track, comment }: IProps) => {
                                             src={fetchDefaultImage(
                                                 item.user.type
                                             )}
+                                            width={30}
+                                            height={30}
                                             style={{
-                                                width: 30,
-                                                height: 30,
                                                 position: "absolute",
                                                 zIndex: 3,
                                                 top: 72,
@@ -310,25 +311,24 @@ const WaveTrack = ({ track, comment }: IProps) => {
 
                 {/* Avatar */}
                 <div className="right">
-                    <div
-                        style={{
-                            background: "#333",
-                            width: "300px",
-                            height: "300px",
-                            borderRadius: "12px",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            color: "#fff",
-                            fontSize: "20px",
-                            boxShadow: "0 4px 12px rgba(0,0,0,0.4)",
-                            overflow: "hidden",
-                        }}
-                    >
+                    <div>
                         {track ? (
-                            <img
+                            <Image
                                 src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/images/${track.imgUrl}`}
                                 alt=""
+                                width={300}
+                                height={300}
+                                style={{
+                                    background: "#333",
+                                    borderRadius: "12px",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    color: "#fff",
+                                    fontSize: "20px",
+                                    boxShadow: "0 4px 12px rgba(0,0,0,0.4)",
+                                    overflow: "hidden",
+                                }}
                             />
                         ) : (
                             <></>

@@ -33,7 +33,6 @@ export const authOptions: AuthOptions = {
                     },
                 });
                 if (res && res.data) {
-                    console.log("check res.data", res.data);
                     // Any object returned will be saved in `user` property of the JWT
                     return res.data as any;
                 } else {
