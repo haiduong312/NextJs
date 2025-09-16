@@ -113,7 +113,7 @@ const TrackProfile = ({ data }: IProps) => {
                     width: 200,
                     objectFit: "contain",
                 }}
-                image={`http://localhost:8000/images/${data.imgUrl}`}
+                image={`${process.env.NEXT_PUBLIC_BACKEND_URL}/images/${data.imgUrl}`}
                 alt={data.title}
             />
         </Card>

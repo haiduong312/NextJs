@@ -71,7 +71,7 @@ const UploadStep2 = ({ openStep1, setOpenStep1, trackUpload }: IProps) => {
 
         try {
             const res = await axios.post(
-                "http://localhost:8000/api/v1/files/upload",
+                `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/files/upload`,
                 formData,
                 {
                     headers: {
@@ -127,7 +127,7 @@ const UploadStep2 = ({ openStep1, setOpenStep1, trackUpload }: IProps) => {
     ];
     const handleSubmit = async () => {
         const res = await sendRequest<IBackendRes<ITrackTop[]>>({
-            url: "http://localhost:8000/api/v1/tracks",
+            url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/tracks`,
             method: "POST",
             body: {
                 title: info.title,

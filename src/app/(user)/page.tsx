@@ -6,7 +6,7 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 const HomePage = async () => {
     const session = await getServerSession(authOptions);
     const chill = await sendRequest<IBackendRes<ITrackTop[]>>({
-        url: "http://localhost:8000/api/v1/tracks/top",
+        url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/tracks/top`,
         method: "POST",
         body: {
             category: "CHILL",
@@ -15,7 +15,7 @@ const HomePage = async () => {
     });
 
     const workouts = await sendRequest<IBackendRes<ITrackTop[]>>({
-        url: "http://localhost:8000/api/v1/tracks/top",
+        url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/tracks/top`,
         method: "POST",
         body: {
             category: "WORKOUT",
@@ -23,7 +23,7 @@ const HomePage = async () => {
         },
     });
     const party = await sendRequest<IBackendRes<ITrackTop[]>>({
-        url: "http://localhost:8000/api/v1/tracks/top",
+        url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/tracks/top`,
         method: "POST",
         body: {
             category: "PARTY",
