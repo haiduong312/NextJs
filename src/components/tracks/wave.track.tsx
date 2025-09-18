@@ -5,7 +5,7 @@ import { useWaveSurfer } from "@/utils/customeHook";
 import { WaveSurferOptions } from "wavesurfer.js";
 import PauseIcon from "@mui/icons-material/Pause";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
-import "./WaveTrack.scss";
+import "./waveTrack.scss";
 import { Tooltip } from "@mui/material";
 import { useTrackContext } from "@/app/lib/context";
 import { fetchDefaultImage, sendRequest } from "@/utils/api";

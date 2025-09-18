@@ -36,30 +36,30 @@ export default function useLocalStorage<T>(
     const isMounted = useRef(false);
     const [value, setValue] = useState<T>(defaultValue);
 
-    // Read from localStorage only after mount.
-    // If we did this in useState's initializer (even with `window` guards),
-    // the server-rendered HTML could differ from the client’s initial render in the browser,
-    // causing hydration issues.
-    const item = window.localStorage.getItem(key);
+    // Chỉ đọc localStorage sau khi mount (client-only)
     useEffect(() => {
         try {
+            const item = window.localStorage.getItem(key);
             if (item) {
                 setValue(JSON.parse(item));
             }
         } catch (e) {
-            console.log(e);
+            console.warn("useLocalStorage read error:", e);
         }
+
         return () => {
-            // Reset the mounted flag when key changes, so that the next effect
-            // doesn't accidentally write an old value under the new key.
             isMounted.current = false;
         };
     }, [key]);
 
+    // Viết lại localStorage khi value thay đổi
     useEffect(() => {
-        // Skip writing on the very first render (when we're still reading from localStorage).
         if (isMounted.current) {
-            window.localStorage.setItem(key, JSON.stringify(value));
+            try {
+                window.localStorage.setItem(key, JSON.stringify(value));
+            } catch (e) {
+                console.warn("useLocalStorage write error:", e);
+            }
         } else {
             isMounted.current = true;
         }

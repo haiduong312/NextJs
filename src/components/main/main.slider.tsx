@@ -119,7 +119,7 @@ const MainSlider = ({ data, title }: IProps) => {
                                 width={200}
                                 height={180}
                                 style={{
-                                    objectFit: "cover",
+                                    objectFit: "contain",
                                 }}
                             />
                             <Link

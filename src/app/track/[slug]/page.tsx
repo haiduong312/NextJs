@@ -50,7 +50,7 @@ const DetailTrackPage = async ({ params }: { params: { slug: string } }) => {
     const res = await sendRequest<IBackendRes<ITrackTop>>({
         url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/tracks/${id}`,
         method: "GET",
-        nextOption: { cache: "no-store" },
+        // nextOption: { cache: "no-store" },
     });
 
     const resComment = await sendRequest<
