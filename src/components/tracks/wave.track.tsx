@@ -156,6 +156,16 @@ const WaveTrack = ({ track, comment }: IProps) => {
                     trackId: track?._id,
                 },
             });
+
+            await sendRequest<IBackendRes<any>>({
+                url: "/api/revalidate",
+                method: "POST",
+                queryParams: {
+                    tag: "track-by-id",
+                    secret: "SECRET_STRING",
+                },
+            });
+
             router.refresh();
             firstViewRef.current = false;
         }

@@ -50,7 +50,9 @@ const DetailTrackPage = async ({ params }: { params: { slug: string } }) => {
     const res = await sendRequest<IBackendRes<ITrackTop>>({
         url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/tracks/${id}`,
         method: "GET",
-        // nextOption: { cache: "no-store" },
+        nextOption: {
+            next: { tags: ["track-by-id"] },
+        },
     });
 
     const resComment = await sendRequest<
@@ -65,7 +67,7 @@ const DetailTrackPage = async ({ params }: { params: { slug: string } }) => {
             sort: "-createdAt",
         },
     });
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+
     if (!res.data) {
         notFound();
     }

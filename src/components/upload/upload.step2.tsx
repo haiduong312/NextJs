@@ -142,6 +142,14 @@ const UploadStep2 = ({ openStep1, setOpenStep1, trackUpload }: IProps) => {
         });
         if (res && res.data) {
             toast.success("Create a new track successfully");
+            await sendRequest<IBackendRes<any>>({
+                url: "/api/revalidate",
+                method: "POST",
+                queryParams: {
+                    tag: "track-by-profile",
+                    secret: "SECRET_STRING",
+                },
+            });
             setOpenStep1(true);
         } else {
             toast.error(res.message);
