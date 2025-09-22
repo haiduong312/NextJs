@@ -60,6 +60,14 @@ const LikeTrack = ({ track }: IProps) => {
                 secret: "SECRET_STRING",
             },
         });
+        await sendRequest<IBackendRes<any>>({
+            url: "/api/revalidate",
+            method: "POST",
+            queryParams: {
+                tag: "liked-by-user",
+                secret: "SECRET_STRING",
+            },
+        });
         router.refresh();
     };
     return (
