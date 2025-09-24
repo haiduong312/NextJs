@@ -22,6 +22,7 @@ import { useRouter } from "next/navigation";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { fetchDefaultImage } from "@/utils/api";
 import Image from "next/image";
+import ActiveLink from "./active.link";
 const Search = styled("div")(({ theme }) => ({
     position: "relative",
     borderRadius: theme.shape.borderRadius,
@@ -210,6 +211,14 @@ export default function Header() {
                             <StyledInputBase
                                 placeholder="Search…"
                                 inputProps={{ "aria-label": "search" }}
+                                onKeyDown={(e: any) => {
+                                    if (e.key === "Enter") {
+                                        if (e?.target?.value)
+                                            router.push(
+                                                `/search?q=${e?.target?.value}`
+                                            );
+                                    }
+                                }}
                             />
                         </Search>
                         <Box sx={{ flexGrow: 1 }} />
@@ -223,15 +232,26 @@ export default function Header() {
                                 "> a": {
                                     color: "unset",
                                     textDecoration: "none",
+                                    "&.active": {
+                                        background: "#3b4a59",
+                                        color: "#cefaff",
+                                        borderRadius: "5px",
+                                        padding: "7px",
+                                    },
                                 },
                             }}
                         >
                             {data?.user ? (
                                 <>
-                                    {" "}
-                                    <Link href={"/playlist"}>Playlists</Link>
-                                    <Link href={"/like"}>Likes</Link>
-                                    <Link href={"/track/upload"}>Upload</Link>
+                                    <ActiveLink href={"/playlist"}>
+                                        Playlists
+                                    </ActiveLink>
+                                    <ActiveLink href={"/like"}>
+                                        Likes
+                                    </ActiveLink>
+                                    <ActiveLink href={"/track/upload"}>
+                                        Upload
+                                    </ActiveLink>
                                     <Image
                                         onClick={handleProfileMenuOpen}
                                         src={fetchDefaultImage(data.user.type)}
