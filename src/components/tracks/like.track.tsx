@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { sendRequest } from "@/utils/api";
 import { useRouter } from "next/navigation";
+import { handleLikeTrackAction } from "@/utils/actions/action";
 interface IProps {
     track: ITrackTop | null;
 }
@@ -37,37 +38,10 @@ const LikeTrack = ({ track }: IProps) => {
         fetchData();
     }, [data]);
     const handleLikeTrack = async () => {
-        await sendRequest<IBackendRes<IModelPaginate<ITrackLike>>>({
-            url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/likes`,
-            method: "POST",
-            body: {
-                track: track?._id,
-                quantity: trackLikes?.some((t) => t._id === track?._id)
-                    ? -1
-                    : 1,
-            },
-            headers: {
-                Authorization: `Bearer ${data?.access_token}`,
-            },
-        });
-
+        const id = track?._id;
+        const quantity = trackLikes?.some((t) => t._id === track?._id) ? -1 : 1;
+        await handleLikeTrackAction(id, quantity);
         fetchData();
-        await sendRequest<IBackendRes<any>>({
-            url: "/api/revalidate",
-            method: "POST",
-            queryParams: {
-                tag: "track-by-id",
-                secret: "SECRET_STRING",
-            },
-        });
-        await sendRequest<IBackendRes<any>>({
-            url: "/api/revalidate",
-            method: "POST",
-            queryParams: {
-                tag: "liked-by-user",
-                secret: "SECRET_STRING",
-            },
-        });
         router.refresh();
     };
     return (
